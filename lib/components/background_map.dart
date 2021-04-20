@@ -34,14 +34,15 @@ class BackgroundMapState extends State<BackgroundMap>
     final _zoomTween = Tween<double>(begin: _mapController.zoom, end: destZoom);
 
     // Create a animation controller that has a duration and a TickerProvider.
-    var controller = AnimationController(
+    AnimationController _controller = AnimationController(
         duration: const Duration(milliseconds: 700), vsync: this);
+
     // The animation determines what path the animation will take. You can try different Curves values, although I found
     // fastOutSlowIn to be my favorite.
     Animation<double> animation =
-        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+        CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn);
 
-    controller.addListener(() {
+    _controller.addListener(() {
       _mapController.move(
           lt.LatLng(
               _latTween.evaluate(animation), _lngTween.evaluate(animation)),
@@ -50,13 +51,14 @@ class BackgroundMapState extends State<BackgroundMap>
 
     animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        controller.dispose();
+        _controller.dispose();
       } else if (status == AnimationStatus.dismissed) {
-        controller.dispose();
+        _controller.dispose();
       }
     });
 
-    controller.forward();
+    _controller.forward();
+    // _controller.dispose();
   }
 
   List<lt.LatLng> positions = [
@@ -72,11 +74,28 @@ class BackgroundMapState extends State<BackgroundMap>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext buildContext) {
-    int index = Provider.of<HomePageProvider>(context).selectedPostIndex % 2;
+    final provider = Provider.of<HomePageProvider>(context);
+    int index = provider.selectedPostIndex % 2;
+    bool myLocation = provider.myLocation;
+    print("myLocation $myLocation");
     if (_mapController.ready) {
+      print("_mapController ready");
       lt.LatLng center = positions[index];
-      _animatedMapMove(center, 18.0);
+      if (myLocation) {
+        print("MY LOCATION");
+        final m = provider.locationResult;
+        if (m != null) _animatedMapMove(m, 18.0);
+        provider.myLocation = false;
+      } else {
+        _animatedMapMove(center, 18.0);
+      }
     }
 
     // _mapController.move(positions[index], 18);

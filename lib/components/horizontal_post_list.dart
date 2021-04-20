@@ -19,13 +19,14 @@ class HorizontalPostList extends StatefulWidget {
 
 class _HorizontalPostListState extends State<HorizontalPostList> {
   late List<PostModel> posts;
-
   @override
   void initState() {
     posts = context.read<HomePageProvider>().posts as List<PostModel>;
+
     super.initState();
   }
 
+  Widget? _widget;
   @override
   Widget build(BuildContext context) {
     print(
@@ -35,24 +36,45 @@ class _HorizontalPostListState extends State<HorizontalPostList> {
     final fraction = MediaQuery.of(context).size.width > 720
         ? originalFraction / 3
         : originalFraction;
+    if (_widget == null) {
+      _widget = buildAlign(context, fraction);
+    }
+
+    return _widget!;
+  }
+
+  Align buildAlign(BuildContext context, double fraction) {
     return Align(
-      alignment: Alignment.bottomCenter,
+      alignment: MediaQuery.of(context).size.width > 720
+          ? Alignment.centerRight
+          : Alignment.bottomCenter,
       child: Container(
         color: Colors.transparent,
-        height: PivotHomePageCard.containerHeight +
-            PivotHomePageCard.cardRateBoxHeight,
+        height: MediaQuery.of(context).size.width > 720
+            ? MediaQuery.of(context).size.height
+            : PivotHomePageCard.containerHeight +
+                PivotHomePageCard.cardRateBoxHeight,
+        width: MediaQuery.of(context).size.width > 720
+            ? 400
+            : MediaQuery.of(context).size.width,
         child: Swiper(
+          scrollDirection: MediaQuery.of(context).size.width > 720
+              ? Axis.vertical
+              : Axis.horizontal,
           index: context.watch<HomePageProvider>().selectedPostIndex,
           onIndexChanged:
               context.read<HomePageProvider>().changeSelectedPostIndex,
           physics: AlwaysScrollableScrollPhysics(),
-          viewportFraction: fraction,
+          viewportFraction:
+              MediaQuery.of(context).size.width > 720 ? .5 : fraction,
           //     MediaQuery.of(context).size.width > 1080 ? 0.3 : 0.9,
           autoplay: false,
           itemCount: posts.length,
           itemBuilder: (BuildContext context, int index) {
             final post = posts[index];
-            return PivotHomePageCard(post: post);
+            return PivotHomePageCard(
+              post: post,
+            );
           },
         ),
       ),
@@ -61,7 +83,7 @@ class _HorizontalPostListState extends State<HorizontalPostList> {
 }
 
 class PivotHomePageCard extends StatelessWidget {
-  const PivotHomePageCard({
+  PivotHomePageCard({
     Key? key,
     required this.post,
   }) : super(key: key);
@@ -71,9 +93,18 @@ class PivotHomePageCard extends StatelessWidget {
   static const double cardRateBoxHeight = 64.0;
   static const double containerHeight = 240.0;
 
+  Widget? _widget;
   @override
   Widget build(BuildContext context) {
-    print("buildPivotHomePageCard ${post.media[0].url}");
+    if (_widget == null) {
+      print("buildPivotHomePageCard ${post.media[0].url}");
+      _widget = buildAlign();
+    }
+
+    return _widget!;
+  }
+
+  Align buildAlign() {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
