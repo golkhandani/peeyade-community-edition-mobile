@@ -4,12 +4,12 @@ import "package:latlong/latlong.dart" as lt;
 import 'package:flutter/material.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:provider/provider.dart';
+import 'package:pyd/communication/location-notifier.dart';
 import 'package:pyd/providers/home_page_provider.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 
 class BackgroundMap extends StatefulWidget {
   BackgroundMap();
-  static const apiKey =
-      "pk.eyJ1IjoiZ29sa2hhbmRhbmkiLCJhIjoiY2toZjBtcmg2MDN2ejJ5cXE5bjVzYW11eiJ9.QTEsmuIQeDTa3phTjiafpQ";
 
   @override
   State createState() => BackgroundMapState();
@@ -17,12 +17,7 @@ class BackgroundMap extends StatefulWidget {
 
 class BackgroundMapState extends State<BackgroundMap>
     with TickerProviderStateMixin {
-  lt.LatLng center = lt.LatLng(35.6892, 51.3890);
   MapController _mapController = MapController();
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void _animatedMapMove(lt.LatLng destLocation, double destZoom) {
     // Create some tweens. These serve to split up the transition from one location to another.
@@ -58,89 +53,127 @@ class BackgroundMapState extends State<BackgroundMap>
     });
 
     _controller.forward();
-    // _controller.dispose();
   }
 
-  List<lt.LatLng> positions = [
-    lt.LatLng(35.6892, 51.3890),
-    lt.LatLng(35.6892, 51.390),
-  ];
+  Marker? _buildUserLocationMarker() {
+    if (locationNotifier.userLatLng != null)
+      return Marker(
+          width: 80.0,
+          height: 80.0,
+          point: locationNotifier.userLatLng,
+          builder: (ctx) => Icon(
+                Icons.crib,
+                size: 25,
+                color: Colors.lightBlue,
+              ));
+  }
 
-  createMapOption(index) {
+  late Marker? _userLocationMarker = _buildUserLocationMarker();
+  _userLocationReady() {
+    print(locationNotifier.userLatLng);
+    if (locationNotifier.status == LocationStatus.available &&
+        _userLocationMarker == null) {
+      setState(() {
+        _userLocationMarker = _buildUserLocationMarker();
+      });
+    }
+  }
+
+  _goToLocation() {
+    _animatedMapMove(_provider.center, 16.0);
+  }
+
+  _createMapOption() {
     return MapOptions(
-      center: positions[index],
-      zoom: 18.0,
+      center: _provider.center,
+      zoom: 16.0,
+      plugins: [
+        MarkerClusterPlugin(),
+      ],
     );
+  }
+
+  late BackgroundMapProvider _provider;
+  @override
+  void initState() {
+    _provider = Provider.of<BackgroundMapProvider>(context, listen: false);
+    _provider.addListener(_goToLocation);
+    locationNotifier.addListener(_userLocationReady);
+    print(locationNotifier.userLatLng);
+    super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _provider.removeListener(_goToLocation);
+    locationNotifier.removeListener(_userLocationReady);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext buildContext) {
-    final provider = Provider.of<HomePageProvider>(context);
-    int index = provider.selectedPostIndex % 2;
-    bool myLocation = provider.myLocation;
-    print("myLocation $myLocation");
-    if (_mapController.ready) {
-      print("_mapController ready");
-      lt.LatLng center = positions[index];
-      if (myLocation) {
-        print("MY LOCATION");
-        final m = provider.locationResult;
-        if (m != null) _animatedMapMove(m, 18.0);
-        provider.myLocation = false;
-      } else {
-        _animatedMapMove(center, 18.0);
-      }
-    }
-
-    // _mapController.move(positions[index], 18);
-    print("buildBackgroundMap $center");
+    print("build => BackgroundMap");
     return SafeArea(
       child: LayoutBuilder(builder: (context, constraints) {
         return Stack(
           children: [
             FlutterMap(
               mapController: _mapController,
-              options: createMapOption(index),
+              options: _createMapOption(),
               layers: [
                 TileLayerOptions(
-                    urlTemplate:
-                        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    subdomains: ['a', 'b', 'c']),
-                // MarkerLayerOptions(
-                //     markers: positions
-                //         .map((e) => Marker(
-                //               width: 80.0,
-                //               height: 80.0,
-                //               point: e,
-                //               builder: (ctx) => Container(
-                //                 decoration: BoxDecoration(
-                //                   color: Colors.red,
-                //                   borderRadius: BorderRadius.circular(100),
-                //                 ),
-                //               ),
-                //             ))
-                //         .toList()),
+                  urlTemplate:
+                      "https://api.maptiler.com/maps/pastel/{z}/{x}/{y}.png?key=J4ktALZX8GCz9Hw7i0tK",
+                  // "https://api.maptiler.com/maps/nl-cartiqo-light/256/{z}/{x}/{y}.png?key=J4ktALZX8GCz9Hw7i0tK",
+                  // "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  subdomains: ['a', 'b', 'c'],
+                  tileProvider: const CachedTileProvider(),
+                ),
+                MarkerClusterLayerOptions(
+                  maxClusterRadius: 30,
+                  fitBoundsOptions: FitBoundsOptions(
+                    padding: EdgeInsets.all(50),
+                  ),
+                  markers: _provider.pins
+                      .map((e) => Marker(
+                          point: e,
+                          // anchorPos: ,
+                          builder: (ctx) => Icon(
+                                Icons.location_pin,
+                                size: 50,
+                                color: Colors.redAccent,
+                              )))
+                      .toList(),
+                  polygonOptions: PolygonOptions(
+                    borderColor: Colors.amber,
+                    color: Colors.black,
+                  ),
+                  builder: (context, markers) {
+                    return Icon(
+                      Icons.group_work,
+                      size: 60,
+                      color: Colors.amberAccent,
+                    );
+                  },
+                ),
+                MarkerLayerOptions(markers: [
+                  if (_userLocationMarker != null) _userLocationMarker!,
+                ]),
               ],
             ),
-            // ElevatedButton(
-            //     child: Container(
-            //       width: 200,
-            //       height: 200,
-            //       color: Colors.red,
-            //     ),
-            //     onPressed: () {
-            //       lt.LatLng center = positions[1];
-            //       _mapController.move(center, 18);
-            //     })
           ],
         );
       }),
     );
+  }
+}
+
+class CachedTileProvider extends TileProvider {
+  const CachedTileProvider();
+  @override
+  ImageProvider getImage(Coords<num> coords, TileLayerOptions options) {
+    final url = getTileUrl(coords, options);
+    print("___MAP => url: $url");
+    return NetworkImage(url);
   }
 }

@@ -1,8 +1,5 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:pyd/communication/api-notifier.dart';
-import 'package:pyd/communication/api.dart';
 
 class NetworkNotifier with ChangeNotifier {
   static final NetworkNotifier _instance = NetworkNotifier._internal();
@@ -27,31 +24,19 @@ class NetworkNotifier with ChangeNotifier {
         throw ("Your device has no active internet");
       }
     } catch (e) {
-      // snackBarNotifier.createSnackBar(e.toString(), Colors.redAccent);
       throw (e);
     } finally {
       _connectivity.onConnectivityChanged.listen((ConnectivityResult result) {
         _connectivityResult = result;
-        if (_connectivityResult == ConnectivityResult.none) {
-          // snackBarNotifier.createSnackBar(
-          //   "Your device has no active internet",
-          //   Colors.redAccent,
-          // );
-        } else {
-          // snackBarNotifier.createSnackBar(
-          //   "Your device connected internet",
-          //   Colors.greenAccent,
-          // );
-        }
       });
+    }
+  }
+
+  void checkConnectivity() {
+    if (networkNotifier.getConnectionResult() == ConnectivityResult.none) {
+      throw ("Your device has no active internet");
     }
   }
 }
 
 final networkNotifier = NetworkNotifier();
-
-void checkConnectivity() {
-  if (networkNotifier.getConnectionResult() == ConnectivityResult.none) {
-    throw ("Your device has no active internet");
-  }
-}

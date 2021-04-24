@@ -62,8 +62,11 @@ class _HorizontalPostListState extends State<HorizontalPostList> {
               ? Axis.vertical
               : Axis.horizontal,
           index: context.watch<HomePageProvider>().selectedPostIndex,
-          onIndexChanged:
-              context.read<HomePageProvider>().changeSelectedPostIndex,
+          onIndexChanged: (index) {
+            context.read<HomePageProvider>().changeSelectedPostIndex(index);
+            var provider = context.read<BackgroundMapProvider>();
+            provider.goToLocation(provider.pins[index]);
+          },
           physics: AlwaysScrollableScrollPhysics(),
           viewportFraction:
               MediaQuery.of(context).size.width > 720 ? .5 : fraction,

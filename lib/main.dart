@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:pyd/communication/api-notifier.dart';
 import 'package:pyd/communication/api.dart';
@@ -25,7 +26,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => HomePageProvider()),
         ChangeNotifierProvider(create: (_) => MainPageViewerProvider()),
-        ChangeNotifierProvider(create: (_) => globalNotifier)
+        ChangeNotifierProvider(create: (_) => BackgroundMapProvider()),
       ],
       child: MyApp(),
     ),
@@ -50,6 +51,8 @@ class LoadingPage extends StatefulWidget {
 
 class _LoadingPageState<T> extends State<LoadingPage>
     with TickerProviderStateMixin {
+  final Location location = Location();
+
   late HomePageProvider _provider;
 
   late AnimationController _animationController =
@@ -69,6 +72,7 @@ class _LoadingPageState<T> extends State<LoadingPage>
   void fetchHomePageData() async {
     try {
       enableLoading();
+
       await _provider.fetchHomePageData();
       Navigator.pushReplacement(
         context,

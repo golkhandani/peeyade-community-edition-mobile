@@ -32,11 +32,11 @@ class _MainPageViewerState extends State<MainPageViewer> {
   changePage(index) {
     setState(() {
       selectedPageIndex = index;
-      // _pageController.jumpToPage(
-      //   index,
-      //   // duration: Duration(milliseconds: 400),
-      //   // curve: Curves.easeIn,
-      // );
+      _pageController.jumpToPage(
+        index,
+        // duration: Duration(milliseconds: 400),
+        // curve: Curves.easeIn,
+      );
     });
   }
 
@@ -63,7 +63,7 @@ class _MainPageViewerState extends State<MainPageViewer> {
   Widget build(BuildContext context) {
     print("build => MainPageViewer");
     return Scaffold(
-      body: buildIndexedStack(),
+      body: buildPageView(),
       bottomNavigationBar: buildBottomNavigationBar(),
     );
   }

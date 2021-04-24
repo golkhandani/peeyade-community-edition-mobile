@@ -160,7 +160,7 @@ void handleServerException(ApiNotification? notification) {
 Future<dynamic> sendGetRequest(String endpoint) async {
   dynamic response;
   apiCallNotifier.clearNotification();
-  checkConnectivity();
+  networkNotifier.checkConnectivity();
 
   try {
     http.Response res = await http.get(Uri.https(kBaseUrl, endpoint));

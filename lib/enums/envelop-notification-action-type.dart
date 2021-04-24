@@ -1,0 +1,4 @@
+enum EnvelopNotificationActionType {
+  alert,
+  banner,
+}
