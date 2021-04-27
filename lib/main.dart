@@ -6,22 +6,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-import 'package:pyd/communication/api-notifier.dart';
-import 'package:pyd/communication/api.dart';
-import 'package:pyd/communication/global_notifier.dart';
-import 'package:pyd/communication/network-notifier.dart';
+import 'package:pyd/notifiers/api-notifier.dart';
+import 'package:pyd/notifiers/api.dart';
+import 'package:pyd/notifiers/network-notifier.dart';
 import 'package:pyd/pages/main_page_viewer.dart';
 import 'package:pyd/providers/home_page_provider.dart';
 import 'package:pyd/providers/main_page_viewer_provider.dart';
-
-/// This is a reimplementation of the default Flutter application using provider + [ChangeNotifier].
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.black));
   runApp(
-    /// Providers are above [MyApp] instead of inside it, so that tests
-    /// can use [MyApp] while mocking the providers
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => HomePageProvider()),
@@ -124,6 +119,7 @@ class _LoadingPageState<T> extends State<LoadingPage>
 
   @override
   void dispose() {
+    // _animationController.dispose();
     super.dispose();
   }
 

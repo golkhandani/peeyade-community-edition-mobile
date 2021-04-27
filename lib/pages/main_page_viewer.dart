@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pyd/components/navigation-bar-button.dart';
 // import 'package:provider/provider.dart';
-import 'package:pyd/communication/global_notifier.dart';
+import 'package:pyd/notifiers/global_notifier.dart';
 import 'package:pyd/pages/home_page.dart';
 
 class MainPageViewer extends StatefulWidget {
@@ -26,17 +27,13 @@ class _MainPageViewerState extends State<MainPageViewer> {
     initialPage: 0,
     viewportFraction: 0.999,
   );
-  int selectedPageIndex = 0;
-  List<Widget> _pages = [];
 
+  List<Widget> _pages = [];
+  int selectedPageIndex = 0;
   changePage(index) {
     setState(() {
       selectedPageIndex = index;
-      _pageController.jumpToPage(
-        index,
-        // duration: Duration(milliseconds: 400),
-        // curve: Curves.easeIn,
-      );
+      _pageController.jumpToPage(index);
     });
   }
 
@@ -68,13 +65,6 @@ class _MainPageViewerState extends State<MainPageViewer> {
     );
   }
 
-  IndexedStack buildIndexedStack() {
-    return IndexedStack(
-      index: selectedPageIndex,
-      children: _pages,
-    );
-  }
-
   PageView buildPageView() {
     return PageView.builder(
       controller: _pageController,
@@ -82,7 +72,7 @@ class _MainPageViewerState extends State<MainPageViewer> {
       pageSnapping: false,
       physics: NeverScrollableScrollPhysics(),
       itemCount: 4,
-      itemBuilder: (context, index) {
+      itemBuilder: (_, index) {
         return _pages[index];
       },
     );
@@ -117,46 +107,6 @@ class _MainPageViewerState extends State<MainPageViewer> {
             enable: selectedPageIndex == 3,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class NavigationBarButton extends StatelessWidget {
-  NavigationBarButton({
-    Key? key,
-    required this.onPressed,
-    required this.icon,
-    required this.enable,
-  }) : super(key: key);
-  final void Function()? onPressed;
-  final IconData icon;
-  final bool enable;
-  @override
-  Widget build(BuildContext context) {
-    return RawMaterialButton(
-      onPressed: onPressed,
-      animationDuration: Duration(milliseconds: 300),
-      constraints: BoxConstraints(
-          maxHeight: 64, maxWidth: 64, minHeight: 64, minWidth: 64),
-      elevation: 6,
-      splashColor: Colors.transparent,
-      enableFeedback: true,
-      highlightColor: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border.all(
-              width: 1, color: enable ? Colors.black87 : Colors.black38),
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.elliptical(120, 100)),
-          shape: BoxShape.rectangle,
-        ),
-        child: Icon(
-          icon,
-          color: enable ? Colors.black87 : Colors.black38,
-          size: 25,
-        ),
       ),
     );
   }

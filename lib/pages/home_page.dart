@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:pyd/communication/global_notifier.dart';
+import 'package:pyd/components/navigation-bar-button.dart';
+import 'package:pyd/notifiers/global_notifier.dart';
 import 'package:provider/provider.dart';
-import 'package:pyd/communication/location-notifier.dart';
+import 'package:pyd/notifiers/location-notifier.dart';
 import 'package:pyd/components/background_map.dart';
-import 'package:pyd/components/horizontal_post_list.dart';
-import 'package:pyd/pages/main_page_viewer.dart';
+import 'package:pyd/components/home_page_summary_card_list.dart';
 import 'package:pyd/providers/home_page_provider.dart';
+
+Future<void> getLocation() async {
+  if (locationNotifier.status == LocationStatus.available) {
+    return;
+  }
+  try {
+    locationNotifier.setMyLocation();
+  } catch (err) {
+    final notif = GlobalNotification(
+      message: "Can't access location data!",
+      notificationType: NotificationType.Dialog,
+    );
+    globalNotifier.create(notif);
+  }
+}
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,20 +29,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // !Location Getter
-  Future<void> _getLocation() async {
-    if (locationNotifier.status == LocationStatus.available) {
-      return;
-    }
-    try {
-      locationNotifier.setMyLocation();
-    } catch (err) {
-      final notif = GlobalNotification(
-        message: "Can't access location data!",
-        notificationType: NotificationType.Dialog,
-      );
-      globalNotifier.create(notif);
-    }
-  }
+
   // !
 
   late Widget _topGradient = buildTopGradient();
@@ -38,9 +40,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     print("init State => HomePage");
+
     super.initState();
     if (mounted) {
-      _getLocation();
+      getLocation();
     }
   }
 
@@ -55,26 +58,31 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Stack(
         children: [
-          // GestureDetector(
-          //   onDoubleTap: () => print("double tap"),
-          //   onTap: () => print("tap"),
-          //   child: Container(
-          //     width: 100,
-          //     height: 100,
-          //     color: Colors.red,
-          //   ),
-          // ),
           _backgroundMap,
           _postList,
           _topGradient,
           _topButton,
+          Align(
+            alignment: Alignment.topLeft,
+            child: Switch(
+              value: context.watch<HomePageProvider>().direction ==
+                  TextDirection.ltr,
+              onChanged: (value) {
+                setState(() {
+                  context.read<HomePageProvider>().changeDirection();
+                });
+              },
+              activeTrackColor: Colors.lightGreenAccent,
+              activeColor: Colors.green,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  HorizontalPostList buildPostList() {
-    return HorizontalPostList();
+  HomePageSummaryCardList buildPostList() {
+    return HomePageSummaryCardList();
   }
 
   BackgroundMap buildBackgroundMap() {
@@ -102,7 +110,7 @@ class _HomePageState extends State<HomePage> {
             enable: false,
             icon: Icons.my_location,
             onPressed: () {
-              context.read<BackgroundMapProvider>().goToUserLocation();
+              context.read<HomePageProvider>().goToUserLocation();
             },
           ),
         ],

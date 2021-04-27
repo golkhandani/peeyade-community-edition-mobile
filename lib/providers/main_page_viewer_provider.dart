@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pyd/communication/api.dart';
+import 'package:pyd/notifiers/api.dart';
 import 'package:pyd/models/post_model.dart';
 
 class MainPageViewerProvider with ChangeNotifier {

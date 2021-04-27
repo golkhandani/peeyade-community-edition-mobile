@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:pyd/communication/api-notifier.dart';
-import 'package:pyd/communication/network-notifier.dart';
+import 'package:pyd/notifiers/api-notifier.dart';
+import 'package:pyd/notifiers/network-notifier.dart';
 
 class ApiNotification {
   ApiNotification({

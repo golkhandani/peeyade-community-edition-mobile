@@ -57,7 +57,7 @@ class SummaryCard {
     required this.media,
     required this.rates,
     required this.maxTotalRate,
-    required this.currenttotalRate,
+    required this.currentTotalRate,
   });
 
   String id;
@@ -68,7 +68,7 @@ class SummaryCard {
   List<Media> media;
   List<Rate> rates;
   int maxTotalRate;
-  double currenttotalRate;
+  double currentTotalRate;
 
   static const int maxStar = 5;
 
@@ -100,7 +100,7 @@ class SummaryCard {
       media: List<Media>.from(json["media"].map((x) => Media.fromJson(x))),
       rates: rates,
       maxTotalRate: SummaryCard.maxStar,
-      currenttotalRate: currentTotalRate,
+      currentTotalRate: currentTotalRate,
     );
   }
 }
