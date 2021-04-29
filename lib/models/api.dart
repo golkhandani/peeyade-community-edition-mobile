@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:pyd/notifiers/network-notifier.dart';
 import 'package:pyd/models/envlop.dart';
 
-class ApiCall {
+class Api {
   static String baseURL = 'api.jsonbin.io';
   static String homePage = 'b/6072ba8fee971419c4d63894/7';
   static Future<T> fetch<T>(

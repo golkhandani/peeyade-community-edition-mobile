@@ -1,11 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pyd/components/progressive_image_loader.dart';
 import 'package:pyd/components/rate-gauge.dart';
 import 'package:pyd/constants.dart';
 import 'package:pyd/models/summary-card.dart';
+import 'package:pyd/pages/pivot_detail_page.dart';
 import 'package:pyd/providers/home_page_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:pyd/providers/pivot_detail_page_provider.dart';
 
 class SummaryCardBox extends StatefulWidget {
   SummaryCardBox({
@@ -20,33 +24,50 @@ class SummaryCardBox extends StatefulWidget {
 }
 
 class _SummaryCardBoxState extends State<SummaryCardBox> {
+  final rnd = Random();
+  late String imageHeroTag = "ImageHeroTag${rnd.nextInt(100)}";
   @override
   Widget build(BuildContext context) {
     return buildSummaryCardContainer();
   }
 
   Widget buildSummaryCardContainer() {
-    print(
-        "buildSummaryCardContainer => ${context.watch<HomePageProvider>().direction}");
-    return Directionality(
-      textDirection: context.watch<HomePageProvider>().direction,
-      child: Align(
-        // force swipper to have box height
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          height: kContainerHeight,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: Colors.black12,
-              width: 2,
+    print("build => SummaryCardContainer => $imageHeroTag");
+    return GestureDetector(
+      onTap: () {
+        print("Card => clicked!");
+        context
+            .read<PivotDetailPageProvider>()
+            .setSelectedSummaryCard(widget.summaryCard);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PivotDetailPage(
+              heroImageTag: imageHeroTag,
             ),
-            borderRadius: BorderRadius.circular(16.0),
           ),
-          // space between card boxes
-          margin: EdgeInsets.symmetric(horizontal: 4.0),
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4.0),
-          child: buildLayoutBuilder(),
+        );
+      },
+      child: Directionality(
+        textDirection: context.watch<HomePageProvider>().direction,
+        child: Align(
+          // force swipper to have box height
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: kContainerHeight,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: Colors.black12,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            // space between card boxes
+            margin: EdgeInsets.symmetric(horizontal: 4.0),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4.0),
+            child: buildLayoutBuilder(),
+          ),
         ),
       ),
     );
@@ -196,62 +217,65 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
         minWidth: imageWidth,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16.0),
-          child: ProgressiveImage.assetNetwork(
-            placeholder: 'assets/placeholder.jpeg',
-            thumbnail: widget.summaryCard.media[0].url
-                .replaceAll("/x_width/y_height", "/180/180"),
-            image: widget.summaryCard.media[0].url
-                .replaceAll("/x_width/y_height", "/180/180"),
-            width: imageWidth,
-            height: imageHeight,
+          child: Hero(
+            tag: imageHeroTag,
+            child: ProgressiveImage.assetNetwork(
+              placeholder: 'assets/placeholder.jpeg',
+              thumbnail: widget.summaryCard.media[0].url
+                  .replaceAll("/x_width/y_height", "/180/180"),
+              image: widget.summaryCard.media[0].url
+                  .replaceAll("/x_width/y_height", "/180/180"),
+              width: imageWidth,
+              height: imageHeight,
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  Container buildRateContainer() {
-    return Container(
-      height: kCardRateBoxHeight,
-      color: Colors.transparent,
-      padding: EdgeInsets.only(top: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildRateGauge(
-            color: Colors.orange,
-            score: 2,
-          ),
-          buildRateGauge(
-            color: Colors.red,
-            score: 2,
-          ),
-          buildRateGauge(
-            color: Colors.lightGreen,
-            score: 2,
-          ),
-          buildRateGauge(
-            color: Colors.purple,
-            score: 2,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Row buildRateGauge({
-    required Color color,
-    required double score,
-  }) {
-    return Row(
+Container buildRateContainer() {
+  return Container(
+    height: kCardRateBoxHeight,
+    color: Colors.transparent,
+    padding: EdgeInsets.only(top: 8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RateGauge(
-          color: color,
-          score: score,
+        buildRateGauge(
+          color: Colors.orange,
+          score: 2,
         ),
-        SizedBox(width: 8),
+        buildRateGauge(
+          color: Colors.red,
+          score: 2,
+        ),
+        buildRateGauge(
+          color: Colors.lightGreen,
+          score: 2,
+        ),
+        buildRateGauge(
+          color: Colors.purple,
+          score: 2,
+        ),
       ],
-    );
-  }
+    ),
+  );
+}
+
+Row buildRateGauge({
+  required Color color,
+  required double score,
+}) {
+  return Row(
+    children: [
+      RateGauge(
+        color: color,
+        score: score,
+      ),
+      SizedBox(width: 8),
+    ],
+  );
 }

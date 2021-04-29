@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pyd/notifiers/api.dart';
-import 'package:pyd/models/post_model.dart';
+import 'package:pyd/models/api.dart';
+import 'package:pyd/models/summary-card.dart';
 
 class MainPageViewerProvider with ChangeNotifier {
   List<dynamic> posts = [];
@@ -25,9 +25,9 @@ class MainPageViewerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchMainPageViewerData() async {
-    final response = await Api.fetchHomePageData();
-    posts = PostModel.listFromDynamic(response);
-    notifyListeners();
-  }
+  // Future<void> fetchMainPageViewerData() async {
+  //   final response = await Api.fetch();
+  //   posts = SummaryCard.listFromDynamic(response);
+  //   notifyListeners();
+  // }
 }

@@ -26,7 +26,7 @@ class BackgroundMapState extends State<BackgroundMap>
   late Marker? _userLocationMarker = buildUserLocationMarker();
   late MapController _mapController = MapController();
 
-  /// create user location marker when map is ready
+  /// create user location marker when location is ready
   _userLocationReady() {
     if (locationNotifier.status == LocationStatus.available &&
         _userLocationMarker == null) {

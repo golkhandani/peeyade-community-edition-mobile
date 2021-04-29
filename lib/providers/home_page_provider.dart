@@ -20,8 +20,8 @@ class HomePageProvider with ChangeNotifier {
 
   List<SummaryCard> summaryCards = [];
   Future<void> fetchHomePageData() async {
-    summaryCards = await ApiCall.fetch(
-      ApiCall.homePage,
+    summaryCards = await Api.fetch(
+      Api.homePage,
       SummaryCard.listFromDynamic,
     );
     notifyListeners();

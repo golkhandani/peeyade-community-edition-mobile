@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
-import 'package:pyd/notifiers/api-notifier.dart';
-import 'package:pyd/notifiers/api.dart';
 import 'package:pyd/notifiers/network-notifier.dart';
 import 'package:pyd/pages/main_page_viewer.dart';
+import 'package:pyd/pages/pivot_detail_page.dart';
 import 'package:pyd/providers/home_page_provider.dart';
 import 'package:pyd/providers/main_page_viewer_provider.dart';
+import 'package:pyd/providers/pivot_detail_page_provider.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -22,6 +23,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => HomePageProvider()),
         ChangeNotifierProvider(create: (_) => MainPageViewerProvider()),
         ChangeNotifierProvider(create: (_) => BackgroundMapProvider()),
+        ChangeNotifierProvider(create: (_) => PivotDetailPageProvider()),
       ],
       child: MyApp(),
     ),
@@ -34,7 +36,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoadingPage(),
+      // home: LoadingPage(),
+      // theme: ThemeData(
+      //   fontFamily: GoogleFonts.adamina(fontStyle: FontStyle.italic).fontFamily,
+      // ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoadingPage(),
+        // When navigating to the "/" route, build the FirstScreen widget.
+        '/main': (context) => MainPageViewer(),
+        // When navigating to the "/second" route, build the SecondScreen widget.
+        '/${PivotDetailPage.path}': (context) => PivotDetailPage(),
+      },
     );
   }
 }
@@ -50,64 +63,18 @@ class _LoadingPageState<T> extends State<LoadingPage>
 
   late HomePageProvider _provider;
 
-  late AnimationController _animationController =
-      AnimationController(vsync: this, duration: Duration(seconds: 3));
-
-  // To handle loading progress
-  Widget _widget = Container();
-  late Widget _loading;
-
-  void enableLoading() {
-    setState(() {
-      if (_animationController.isAnimating) _animationController.dispose();
-      _widget = _loading;
-    });
-  }
-
-  void fetchHomePageData() async {
-    try {
-      enableLoading();
-
-      await _provider.fetchHomePageData();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainPageViewer()),
-      );
-    } catch (e) {
-      final notification = apiCallNotifier.getNotifiaction() ??
-          ApiNotification(
-            message: e.toString(),
-            type: 'Banner',
-          );
-      setState(() {
-        _widget = _createRetry(notification, fetchHomePageData);
-      });
-    }
-  }
-
-  FutureOr<Null> thenNetworkInit(result) {
-    fetchHomePageData();
-  }
-
-  catchNetworkInit(e) {
-    final notification = apiCallNotifier.getNotifiaction() ??
-        ApiNotification(
-          message: e.toString(),
-          type: 'Banner',
-        );
-    setState(() {
-      _widget = _createRetry(notification, fetchHomePageData);
-    });
+  FutureOr<void> fetchHomePage(result) async {
+    await _provider.fetchHomePageData();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => MainPageViewer()),
+    );
   }
 
   void initWidgetState() {
-    _loading = _createLoading();
     _provider = Provider.of<HomePageProvider>(context, listen: false);
     if (mounted) {
-      networkNotifier
-          .initNetworkConnectivity()
-          .then(thenNetworkInit)
-          .catchError(catchNetworkInit);
+      networkNotifier.initNetworkConnectivity().then(fetchHomePage);
     }
   }
 
@@ -119,44 +86,17 @@ class _LoadingPageState<T> extends State<LoadingPage>
 
   @override
   void dispose() {
-    // _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(color: Colors.white, child: _widget),
-    );
-  }
-
-  Center _createLoading() {
-    return Center(
-      child: SpinKitCircle(
-        color: Colors.black,
-        size: 50,
-        controller: _animationController,
-      ),
-    );
-  }
-
-  Center _createRetry(ApiNotification notification, Function retry) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(notification.message!),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: Colors.red,
-            ),
-            onPressed: fetchHomePageData,
-            child: Container(
-              child: Text("Retry"),
-            ),
-          ),
-        ],
+      body: Center(
+        child: SpinKitCircle(
+          color: Colors.black,
+          size: 50,
+        ),
       ),
     );
   }
