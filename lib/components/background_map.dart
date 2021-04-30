@@ -87,7 +87,7 @@ class BackgroundMapState extends State<BackgroundMap>
         height: 80.0,
         point: locationNotifier.userLatLng,
         builder: (ctx) => Icon(
-          Icons.crib,
+          Icons.pin,
           size: 25,
           color: Colors.lightBlue,
         ),
