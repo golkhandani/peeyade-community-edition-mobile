@@ -35,7 +35,7 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
     print("build => SummaryCardContainer => $imageHeroTag");
     return GestureDetector(
       onTap: () {
-        print("Card => clicked!");
+        print("Card => clicked! $imageHeroTag");
         context
             .read<PivotDetailPageProvider>()
             .setSelectedSummaryCard(widget.summaryCard);

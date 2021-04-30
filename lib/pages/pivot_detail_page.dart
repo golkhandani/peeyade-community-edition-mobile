@@ -16,14 +16,14 @@ class PivotDetailPage extends StatefulWidget {
 }
 
 class _PivotDetailPageState extends State<PivotDetailPage> {
-  // late SummaryCard _summaryCard;
+  late SummaryCard _summaryCard;
   late PivotDetailPageProvider _provider;
 
   @override
   void initState() {
     // TODO: implement initState
     _provider = Provider.of<PivotDetailPageProvider>(context, listen: false);
-    // _summaryCard = _provider.selectedSummaryCard!;
+    _summaryCard = _provider.selectedSummaryCard!;
     super.initState();
   }
 
@@ -41,36 +41,16 @@ class _PivotDetailPageState extends State<PivotDetailPage> {
               viewportFraction: 0.8,
               autoplay: false,
               loop: true,
-              itemCount: 3,
+              itemCount: _summaryCard.media.length,
               itemBuilder: (_, int index) {
+                var imageURL = _summaryCard.media[index].url;
                 if (index == 0) {
                   return Hero(
                     tag: widget.heroImageTag,
-                    child: ProgressiveImage.assetNetwork(
-                      placeholder: 'assets/placeholder.jpeg',
-                      thumbnail:
-                          "https://picsum.photos/id/10$index/x_width/y_height"
-                              .replaceAll("/x_width/y_height", "/180/180"),
-                      image:
-                          "https://picsum.photos/id/10$index/x_width/y_height"
-                              .replaceAll("/x_width/y_height", "/300/400"),
-                      width: 0.8 * MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      fit: BoxFit.fitWidth,
-                    ),
+                    child: buildProgressiveImage(imageURL, context),
                   );
                 } else {
-                  return ProgressiveImage.assetNetwork(
-                    placeholder: 'assets/placeholder.jpeg',
-                    thumbnail:
-                        "https://picsum.photos/id/10$index/x_width/y_height"
-                            .replaceAll("/x_width/y_height", "/180/180"),
-                    image: "https://picsum.photos/id/10$index/x_width/y_height"
-                        .replaceAll("/x_width/y_height", "/300/400"),
-                    width: 0.8 * MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    fit: BoxFit.fitWidth,
-                  );
+                  return buildProgressiveImage(imageURL, context);
                 }
               },
             ),
@@ -98,6 +78,16 @@ class _PivotDetailPageState extends State<PivotDetailPage> {
                   SizedBox(height: 16),
                   Text(
                     "Armagedon Restaurant is one of the best in NYC subtitle",
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    maxLines: 2,
+                  ),
+                  Text(
+                    "${_summaryCard.contacts[0].type}",
                     style: TextStyle(
                       color: Colors.black54,
                       fontSize: 14,
@@ -170,6 +160,18 @@ class _PivotDetailPageState extends State<PivotDetailPage> {
           // ),
         ],
       ),
+    );
+  }
+
+  ProgressiveImage buildProgressiveImage(
+      String imageURL, BuildContext context) {
+    return ProgressiveImage.assetNetwork(
+      placeholder: 'assets/placeholder.jpeg',
+      thumbnail: imageURL.replaceAll("/x_width/y_height", "/180/180"),
+      image: imageURL.replaceAll("/x_width/y_height", "/800/500"),
+      width: 0.8 * MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      fit: BoxFit.cover,
     );
   }
 }
