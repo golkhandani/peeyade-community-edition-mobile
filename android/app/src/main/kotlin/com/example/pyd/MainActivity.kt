@@ -1,4 +1,4 @@
-package com.example.pyd
+package com.peeyade.flutter
 
 import io.flutter.embedding.android.FlutterActivity
 
