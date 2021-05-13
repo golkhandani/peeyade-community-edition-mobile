@@ -80,9 +80,9 @@ class _MainPageViewerState extends State<MainPageViewer> {
 
   Widget buildBottomNavigationBar() {
     return Container(
-      height: 64,
+      height: 80,
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -90,21 +90,25 @@ class _MainPageViewerState extends State<MainPageViewer> {
             onPressed: () => changePage(0),
             icon: Icons.home,
             enable: selectedPageIndex == 0,
+            text: "Home",
           ),
           NavigationBarButton(
             onPressed: () => changePage(1),
             icon: Icons.list,
             enable: selectedPageIndex == 1,
+            text: "Notif",
           ),
           NavigationBarButton(
             onPressed: () => changePage(2),
             icon: Icons.favorite_border,
             enable: selectedPageIndex == 2,
+            text: "Page 3",
           ),
           NavigationBarButton(
             onPressed: () => changePage(3),
             icon: Icons.person,
             enable: selectedPageIndex == 3,
+            text: "Page 4",
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pyd/components/progressive_image_loader.dart';
 import 'package:pyd/components/rate-gauge.dart';
 import 'package:pyd/constants.dart';
+import 'package:pyd/helpers/from-hex-color.dart';
 import 'package:pyd/models/summary-card.dart';
 import 'package:pyd/pages/pivot_detail_page.dart';
 import 'package:pyd/providers/home_page_provider.dart';
@@ -35,7 +36,6 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
     print("build => SummaryCardContainer => $imageHeroTag");
     return GestureDetector(
       onTap: () {
-        print("Card => clicked! $imageHeroTag");
         context
             .read<PivotDetailPageProvider>()
             .setSelectedSummaryCard(widget.summaryCard);
@@ -93,7 +93,7 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
               ),
               // child: buildRowOfImageAndInfo(constraints, context),
             ),
-            buildRateContainer()
+            buildRateContainer(widget.summaryCard.rates)
           ],
         );
       },
@@ -124,8 +124,8 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          color: Colors.black38,
-          fontSize: 16,
+          color: Colors.black54,
+          fontSize: 14,
         ),
       ),
     );
@@ -136,9 +136,12 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
       padding: EdgeInsets.only(bottom: 8.0),
       child: Text(
         widget.summaryCard.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          color: Colors.black45,
-          fontSize: 20,
+          color: Colors.black87,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -149,7 +152,7 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
   Row buildStarsAndHeart(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         buildStarsBar(),
         buildHeartButton(context),
@@ -190,7 +193,7 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
         color: Colors.amber,
       ),
       itemCount: 5,
-      itemSize: 30.0,
+      itemSize: 25.0,
       direction: Axis.horizontal,
     );
   }
@@ -235,7 +238,8 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
   }
 }
 
-Container buildRateContainer() {
+Container buildRateContainer(List<Rate> rates) {
+  print(rates[0].colorHex);
   return Container(
     height: kCardRateBoxHeight,
     color: Colors.transparent,
@@ -244,22 +248,28 @@ Container buildRateContainer() {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        buildRateGauge(
-          color: Colors.orange,
-          score: 2,
+        ...rates.map(
+          (rate) => buildRateGauge(
+            color: fromHexColor(rate.colorHex),
+            score: rate.value,
+          ),
         ),
-        buildRateGauge(
-          color: Colors.red,
-          score: 2,
-        ),
-        buildRateGauge(
-          color: Colors.lightGreen,
-          score: 2,
-        ),
-        buildRateGauge(
-          color: Colors.purple,
-          score: 2,
-        ),
+        // buildRateGauge(
+        //   color: Colors.orange,
+        //   score: 2,
+        // ),
+        // buildRateGauge(
+        //   color: Colors.red,
+        //   score: 2,
+        // ),
+        // buildRateGauge(
+        //   color: Colors.lightGreen,
+        //   score: 2,
+        // ),
+        // buildRateGauge(
+        //   color: Colors.purple,
+        //   score: 2,
+        // ),
       ],
     ),
   );

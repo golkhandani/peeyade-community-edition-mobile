@@ -63,18 +63,37 @@ class _LoadingPageState<T> extends State<LoadingPage>
 
   late HomePageProvider _provider;
 
-  FutureOr<void> fetchHomePage(result) async {
-    await _provider.fetchHomePageData();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => MainPageViewer()),
-    );
+  String? message;
+  bool showRetry = false;
+  FutureOr<void> fetchHomePage() async {
+    try {
+      await _provider.fetchHomePageData();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPageViewer()),
+      );
+    } catch (e) {
+      setState(() {
+        message = e.toString();
+        showRetry = true;
+      });
+    }
+  }
+
+  void connectivityError(error) {
+    setState(() {
+      showRetry = true;
+      message = error.toString();
+    });
   }
 
   void initWidgetState() {
     _provider = Provider.of<HomePageProvider>(context, listen: false);
     if (mounted) {
-      networkNotifier.initNetworkConnectivity().then(fetchHomePage);
+      networkNotifier
+          .initNetworkConnectivity()
+          .then((result) => fetchHomePage())
+          .catchError((error) => connectivityError(error));
     }
   }
 
@@ -91,13 +110,45 @@ class _LoadingPageState<T> extends State<LoadingPage>
 
   @override
   Widget build(BuildContext context) {
+    print(showRetry);
     return Scaffold(
-      body: Center(
-        child: SpinKitCircle(
-          color: Colors.black,
-          size: 50,
-        ),
+      body: Stack(
+        children: [
+          Visibility(
+            visible: !showRetry,
+            child: Center(
+              child: SpinKitCircle(
+                color: Colors.red,
+                size: 50,
+              ),
+            ),
+          ),
+          Visibility(
+            visible: showRetry,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(message ?? ""),
+                  ElevatedButton(
+                    child: Text("Retry"),
+                    onPressed: retryFetch,
+                  )
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
+  }
+
+  void retryFetch() {
+    fetchHomePage();
+    setState(() {
+      showRetry = false;
+      message = null;
+    });
   }
 }

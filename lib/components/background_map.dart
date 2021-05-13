@@ -107,14 +107,30 @@ class BackgroundMapState extends State<BackgroundMap>
       fitBoundsOptions: FitBoundsOptions(
         padding: EdgeInsets.all(50),
       ),
-      markers: _provider.pins
-          .map((e) => Marker(
-              point: e,
-              // anchorPos: ,
-              builder: (ctx) => Icon(
-                    Icons.location_pin,
-                    size: 50,
-                    color: Colors.redAccent,
+      markers: _provider.summaryCards
+          .map((summaryCard) => Marker(
+              height: 50,
+              width: 50,
+              point: lt.LatLng(
+                summaryCard.address.location.lat,
+                summaryCard.address.location.lng,
+              ),
+              builder: (ctx) => GestureDetector(
+                    onTap: () {
+                      print(_provider.summaryCards.indexOf(summaryCard));
+                      _provider.changeSelectedIndex(summaryCard);
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      child: Center(
+                        child: Icon(
+                          Icons.location_pin,
+                          size: 50,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                    ),
                   )))
           .toList(),
       polygonOptions: PolygonOptions(

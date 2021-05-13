@@ -33,6 +33,7 @@ class NetworkNotifier with ChangeNotifier {
   }
 
   void checkConnectivity() {
+    print(networkNotifier.getConnectionResult());
     if (networkNotifier.getConnectionResult() == ConnectivityResult.none) {
       throw ("Your device has no active internet");
     }

@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   // !
 
   late Widget _topGradient = buildTopGradient();
+  late Widget _bottomGradient = buildBottomGradient();
   late Widget _topButton = buildTopButtonContainer();
   late Widget _postList = buildPostList();
   late Widget _backgroundMap = buildBackgroundMap();
@@ -59,8 +60,9 @@ class _HomePageState extends State<HomePage> {
       child: Stack(
         children: [
           _backgroundMap,
-          _postList,
+          _bottomGradient,
           _topGradient,
+          _postList,
           _topButton,
           Align(
             alignment: Alignment.topLeft,
@@ -133,6 +135,30 @@ class _HomePageState extends State<HomePage> {
               Colors.white,
               Colors.white.withOpacity(0.0),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  IgnorePointer buildBottomGradient() {
+    print("buildTopGradient");
+    return IgnorePointer(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Container(
+          alignment: Alignment.bottomCenter,
+          height: 160,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                Colors.white,
+                Colors.white.withOpacity(0.0),
+              ],
+            ),
           ),
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:pyd/components/summary_card.dart';
 import 'package:pyd/constants.dart';
 import 'package:pyd/models/summary-card.dart';
 import 'package:pyd/providers/home_page_provider.dart';
+import "package:latlong/latlong.dart" as lt;
 
 class HomePageSummaryCardList extends StatefulWidget {
   HomePageSummaryCardList({
@@ -19,24 +20,24 @@ class HomePageSummaryCardList extends StatefulWidget {
 
 class _HomePageSummaryCardListState extends State<HomePageSummaryCardList> {
   late HomePageProvider _provider;
-  late List<SummaryCard> _summaryCards;
+  late List<SummaryCard> summaryCards;
   @override
   void initState() {
     _provider = context.read<HomePageProvider>();
-    _summaryCards = _provider.summaryCards;
+    summaryCards = _provider.summaryCards;
     super.initState();
   }
 
-  Widget? _widget;
+  SwiperController _swiperController = SwiperController();
+  _goToIndex() {
+    _swiperController.move(_provider.selectedIndex);
+  }
+
   @override
   Widget build(BuildContext context) {
     print("build => HomePageSummaryCardList");
-
-    if (_widget == null) {
-      _widget = buildAlign();
-    }
-
-    return _widget!;
+    _provider.addListener(_goToIndex);
+    return buildAlign();
   }
 
   Widget buildAlign() {
@@ -51,16 +52,22 @@ class _HomePageSummaryCardListState extends State<HomePageSummaryCardList> {
           maxHeight: kContainerHeight + kImageOutHeight + 8,
           alignment: Alignment.bottomCenter,
           child: Swiper(
+            controller: _swiperController,
             index: _provider.selectedIndex,
             onIndexChanged: (index) {
-              _provider.changeSelectedIndex(index);
-              _provider.goToLocation(_provider.pins[index]);
+              var summaryCard = summaryCards[index];
+              _provider.changeSelectedIndex(summaryCard);
+              _provider.goToLocation(lt.LatLng(
+                summaryCard.address.location.lat,
+                summaryCard.address.location.lng,
+              ));
             },
             viewportFraction: 0.9,
             autoplay: false,
-            itemCount: _summaryCards.length,
+            loop: false,
+            itemCount: summaryCards.length,
             itemBuilder: (_, int index) {
-              return SummaryCardBox(summaryCard: _summaryCards[index]);
+              return SummaryCardBox(summaryCard: summaryCards[index]);
             },
           ),
         ),

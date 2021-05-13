@@ -7,7 +7,7 @@ import 'package:pyd/models/summary-card.dart';
 import "package:latlong/latlong.dart" as lt;
 
 class HomePageProvider with ChangeNotifier {
-  TextDirection direction = TextDirection.ltr;
+  TextDirection direction = TextDirection.rtl;
   changeDirection() {
     if (direction == TextDirection.ltr) {
       direction = TextDirection.rtl;
@@ -24,19 +24,18 @@ class HomePageProvider with ChangeNotifier {
       Api.homePage,
       SummaryCard.listFromDynamic,
     );
+
     notifyListeners();
   }
 
   lt.LatLng? _center;
-  lt.LatLng get center => _center ?? lt.LatLng(35.6892, 51.3890);
+  lt.LatLng get center =>
+      _center ??
+      lt.LatLng(
+        summaryCards[0].address.location.lat,
+        summaryCards[0].address.location.lng,
+      );
 
-  List<lt.LatLng> pins = [
-    lt.LatLng(35.6892, 51.3890),
-    lt.LatLng(35.6892, 51.390),
-    lt.LatLng(35.6992, 51.390),
-    lt.LatLng(35.6792, 51.390),
-    lt.LatLng(35.6772, 51.390),
-  ];
   goToUserLocation() {
     _center = locationNotifier.userLatLng;
     notifyListeners();
@@ -48,8 +47,13 @@ class HomePageProvider with ChangeNotifier {
   }
 
   int selectedIndex = 0;
-  void changeSelectedIndex(index) {
-    selectedIndex = index;
+  void changeSelectedIndex(SummaryCard summaryCard) {
+    selectedIndex = summaryCards.indexOf(summaryCard);
+    print("selectedIndex $selectedIndex");
+    _center = lt.LatLng(
+      summaryCard.address.location.lat,
+      summaryCard.address.location.lng,
+    );
     notifyListeners();
   }
 

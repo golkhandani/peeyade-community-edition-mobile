@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'dart:math';
+
 class Media {
   Media({
     required this.type,
@@ -41,7 +43,9 @@ class Rate {
   factory Rate.fromJson(Map<String, dynamic> json) => Rate(
         title: json["title"],
         iconUrl: json["iconURL"],
-        colorHex: json["colorHex"],
+        colorHex: json["colorHex"] != null
+            ? json["colorHex"]
+            : Random().nextInt(0xffffffff).toString(),
         base: json["base"],
         value: json["value"].toDouble(),
       );
@@ -236,6 +240,7 @@ class SummaryCard {
       return rate;
     }));
     currentTotalRate = (currentTotalRate / maxTotalRate) * SummaryCard.maxStar;
+    print(currentTotalRate);
     // END RATE;
 
     // CONTACTS
