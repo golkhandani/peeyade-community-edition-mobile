@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pyd/components/progressive_image_loader.dart';
 import 'package:pyd/components/rate-gauge.dart';
 import 'package:pyd/constants.dart';
@@ -168,8 +169,8 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
         constraints: BoxConstraints(minHeight: 0, minWidth: 0),
         icon: Icon(
           context.watch<HomePageProvider>().isLiked
-              ? Icons.favorite
-              : Icons.favorite_border,
+              ? FontAwesomeIcons.solidHeart
+              : FontAwesomeIcons.heart,
           size: 25,
           color: Colors.red,
         ),
@@ -186,10 +187,10 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
       unratedColor: Colors.amber[400],
       itemBuilder: (context, index) => Icon(
         index > widget.summaryCard.currentTotalRate
-            ? Icons.star_outline_rounded
+            ? FontAwesomeIcons.star
             : index == widget.summaryCard.currentTotalRate.toInt()
-                ? Icons.star_half_rounded
-                : Icons.star_rounded,
+                ? FontAwesomeIcons.star
+                : FontAwesomeIcons.solidStar,
         color: Colors.amber,
       ),
       itemCount: 5,
@@ -206,12 +207,12 @@ class _SummaryCardBoxState extends State<SummaryCardBox> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.0),
         boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(shadowDirection, 2), // changes position of shadow
-          ),
+          // BoxShadow(
+          //   color: Colors.grey.withOpacity(0.5),
+          //   spreadRadius: 2,
+          //   blurRadius: 5,
+          //   offset: Offset(shadowDirection, 2), // changes position of shadow
+          // ),
         ],
       ),
       child: OverflowBox(

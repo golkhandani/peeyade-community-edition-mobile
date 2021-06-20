@@ -9,6 +9,7 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 import 'package:pyd/notifiers/network-notifier.dart';
 import 'package:pyd/pages/main_page_viewer.dart';
+import 'package:pyd/pages/page_viewer.dart';
 import 'package:pyd/pages/pivot_detail_page.dart';
 import 'package:pyd/providers/home_page_provider.dart';
 import 'package:pyd/providers/main_page_viewer_provider.dart';
@@ -36,17 +37,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // home: LoadingPage(),
-      // theme: ThemeData(
-      //   fontFamily: GoogleFonts.adamina(fontStyle: FontStyle.italic).fontFamily,
-      // ),
+      home: LoadingPage(),
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.black,
+        backgroundColor: Colors.black,
+        fontFamily: GoogleFonts.nunito(
+                // fontStyle: FontStyle.normal,
+                // height: 1.6,
+                // letterSpacing: 2,
+                // wordSpacing: 1,
+                )
+            .fontFamily,
+      ),
       initialRoute: '/',
       routes: {
-        '/': (context) => LoadingPage(),
-        // When navigating to the "/" route, build the FirstScreen widget.
         '/main': (context) => MainPageViewer(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
-        '/${PivotDetailPage.path}': (context) => PivotDetailPage(),
+        '/PivotDetailPage': (context) => PivotDetailPage(),
       },
     );
   }
@@ -67,10 +73,10 @@ class _LoadingPageState<T> extends State<LoadingPage>
   bool showRetry = false;
   FutureOr<void> fetchHomePage() async {
     try {
-      await _provider.fetchHomePageData();
+      // await _provider.fetchHomePageData();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MainPageViewer()),
+        MaterialPageRoute(builder: (context) => PageViewer()),
       );
     } catch (e) {
       setState(() {

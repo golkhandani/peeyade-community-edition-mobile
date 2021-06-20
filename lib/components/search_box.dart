@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SearchBar extends StatefulWidget {
   const SearchBar({
@@ -49,7 +50,7 @@ class _SearchBarState extends State<SearchBar> {
                 labelText: 'What are you looking for?',
                 labelStyle: TextStyle(color: Colors.black),
                 prefixIcon: Icon(
-                  Icons.search_rounded,
+                  FontAwesomeIcons.search,
                   color: Colors.black,
                 ),
                 suffix: Container(

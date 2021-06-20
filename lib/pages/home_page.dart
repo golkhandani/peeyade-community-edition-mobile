@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pyd/components/navigation-bar-button.dart';
 import 'package:pyd/notifiers/global_notifier.dart';
 import 'package:provider/provider.dart';
@@ -99,7 +100,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           NavigationBarButton(
             enable: false,
-            icon: Icons.search,
+            icon: FontAwesomeIcons.search,
             onPressed: () {
               final notif = GlobalNotification(
                 message: "Search",
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
           ),
           NavigationBarButton(
             enable: false,
-            icon: Icons.my_location,
+            icon: FontAwesomeIcons.dotCircle,
             onPressed: () {
               context.read<HomePageProvider>().goToUserLocation();
             },
@@ -148,7 +149,7 @@ class _HomePageState extends State<HomePage> {
         alignment: Alignment.bottomCenter,
         child: Container(
           alignment: Alignment.bottomCenter,
-          height: 160,
+          height: 360,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -156,6 +157,8 @@ class _HomePageState extends State<HomePage> {
               end: Alignment.topCenter,
               colors: [
                 Colors.white,
+                Colors.white,
+                Colors.white.withOpacity(0.5),
                 Colors.white.withOpacity(0.0),
               ],
             ),

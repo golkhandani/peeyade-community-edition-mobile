@@ -11,6 +11,7 @@ import 'package:pyd/notifiers/location-notifier.dart';
 import 'package:pyd/providers/home_page_provider.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BackgroundMap extends StatefulWidget {
   BackgroundMap();
@@ -58,14 +59,17 @@ class BackgroundMapState extends State<BackgroundMap>
   Widget build(BuildContext buildContext) {
     print("build => BackgroundMap");
     return SafeArea(
-      child: FlutterMap(
-        mapController: _mapController,
-        options: buildMapOptions(),
-        layers: [
-          buildTileLayerOptions(),
-          buildMarkerClusterLayerOptions(),
-          buildUserMarkerLayerOptions(),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 128),
+        child: FlutterMap(
+          mapController: _mapController,
+          options: buildMapOptions(),
+          layers: [
+            buildTileLayerOptions(),
+            buildMarkerClusterLayerOptions(),
+            buildUserMarkerLayerOptions(),
+          ],
+        ),
       ),
     );
   }
@@ -87,7 +91,7 @@ class BackgroundMapState extends State<BackgroundMap>
         height: 80.0,
         point: locationNotifier.userLatLng,
         builder: (ctx) => Icon(
-          Icons.pin,
+          FontAwesomeIcons.circle,
           size: 25,
           color: Colors.lightBlue,
         ),
@@ -125,9 +129,9 @@ class BackgroundMapState extends State<BackgroundMap>
                       height: 50,
                       child: Center(
                         child: Icon(
-                          Icons.location_pin,
+                          FontAwesomeIcons.mapPin,
                           size: 50,
-                          color: Colors.redAccent,
+                          color: Colors.red,
                         ),
                       ),
                     ),

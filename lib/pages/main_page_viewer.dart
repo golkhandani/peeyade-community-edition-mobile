@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pyd/components/navigation-bar-button.dart';
 // import 'package:provider/provider.dart';
 import 'package:pyd/notifiers/global_notifier.dart';
@@ -71,7 +72,7 @@ class _MainPageViewerState extends State<MainPageViewer> {
       allowImplicitScrolling: false,
       pageSnapping: false,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: 4,
+      itemCount: _pages.length,
       itemBuilder: (_, index) {
         return _pages[index];
       },
@@ -88,25 +89,25 @@ class _MainPageViewerState extends State<MainPageViewer> {
         children: [
           NavigationBarButton(
             onPressed: () => changePage(0),
-            icon: Icons.home,
+            icon: FontAwesomeIcons.home,
             enable: selectedPageIndex == 0,
             text: "Home",
           ),
           NavigationBarButton(
             onPressed: () => changePage(1),
-            icon: Icons.list,
+            icon: FontAwesomeIcons.list,
             enable: selectedPageIndex == 1,
             text: "Notif",
           ),
           NavigationBarButton(
             onPressed: () => changePage(2),
-            icon: Icons.favorite_border,
+            icon: FontAwesomeIcons.heart,
             enable: selectedPageIndex == 2,
             text: "Page 3",
           ),
           NavigationBarButton(
             onPressed: () => changePage(3),
-            icon: Icons.person,
+            icon: FontAwesomeIcons.male,
             enable: selectedPageIndex == 3,
             text: "Page 4",
           ),

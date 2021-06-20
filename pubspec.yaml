@@ -30,6 +30,7 @@ dependencies:
   toast: ^0.1.5
   location: ^4.1.1
   flutter_map_marker_cluster: ^0.3.4
+  font_awesome_flutter: ^9.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -40,6 +41,8 @@ dependencies:
   json_annotation: ^4.0.1
   connectivity: ^3.0.3
   google_fonts: ^2.0.0
+  flutter_icons: ^1.1.0
+  flutter_map_tile_caching: ^1.0.1
 
 dev_dependencies:
   flutter_test:
